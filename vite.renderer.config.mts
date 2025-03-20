@@ -7,7 +7,12 @@ import { defineConfig } from "vite";
 // https://vitejs.dev/config
 export default defineConfig({
   plugins: [
-    TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
+    TanStackRouterVite({
+      target: "react",
+      autoCodeSplitting: true,
+      routesDirectory: "src/client/routes",
+      generatedRouteTree: "src/client/routeTree.gen.ts",
+    }),
     react(),
     tailwindcss(),
   ],

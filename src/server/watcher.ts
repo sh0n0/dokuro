@@ -1,10 +1,10 @@
+import fs from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { observable } from "@trpc/server/observable";
 import chokidar from "chokidar";
-import fs from "node:fs";
 import { type Change, diffLines } from "diff";
 import { procedure, router } from "./trpc";
-import { join } from "node:path";
-import { homedir } from "node:os";
 
 const filePath = join(homedir(), ".dokuro", "terminal_errors.log");
 

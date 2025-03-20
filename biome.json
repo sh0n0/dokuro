@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["out", ".vite", "src/routeTree.gen.ts"]
+    "ignore": ["out", ".vite", "src/client/routeTree.gen.ts"]
   },
   "formatter": {
     "enabled": true,

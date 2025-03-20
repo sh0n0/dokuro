@@ -1,8 +1,9 @@
+import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./router";
+
+import "./index.css";
 
 export default function App() {
   return <RouterProvider router={router} />;
