@@ -3,20 +3,16 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { observable } from "@trpc/server/observable";
 import chokidar from "chokidar";
-import { type Change, diffLines } from "diff";
+import { diffLines } from "diff";
+import { db } from "./db/connection";
+import { terminalErrors } from "./db/schema";
 import { procedure, router } from "./trpc";
 
 const filePath = join(homedir(), ".dokuro", "terminal_errors.log");
 
-type Message = {
-  path: string;
-  differences: Change[];
-  timestamp: string;
-};
-
 export const fileWatcherRouter = router({
   watchFile: procedure.subscription(() => {
-    return observable<Message>((emit) => {
+    return observable<TerminalError>((emit) => {
       let prevContent = fs.existsSync(filePath)
         ? fs.readFileSync(filePath, "utf-8")
         : "";
@@ -25,17 +21,26 @@ export const fileWatcherRouter = router({
         persistent: true,
       });
 
-      watcher.on("change", (path) => {
+      watcher.on("change", async (path) => {
         const newContent = fs.readFileSync(path, "utf-8");
-        const differences = diffLines(prevContent, newContent);
-
-        emit.next({
-          path,
-          differences,
-          timestamp: new Date().toISOString(),
-        });
+        const [, differences] = diffLines(prevContent, newContent);
 
         prevContent = newContent;
+        if (!differences.added) return;
+
+        const [data] = await db
+          .insert(terminalErrors)
+          .values({
+            value: differences.value,
+          })
+          .returning();
+        if (!data) return;
+
+        emit.next({
+          id: data.id,
+          value: data.value,
+          timestamp: data.createdAt,
+        });
       });
 
       return () => {

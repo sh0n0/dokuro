@@ -10,8 +10,11 @@ import { FuseV1Options, FuseVersion } from "@electron/fuses";
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    extraResource: ["./migrations"],
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    onlyModules: ["better-sqlite3"],
+  },
   makers: [
     new MakerSquirrel({}),
     new MakerZIP({}, ["darwin"]),

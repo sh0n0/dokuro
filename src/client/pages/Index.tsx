@@ -1,18 +1,23 @@
 import { trpc } from "@/client/lib/trpc";
-import type { Change } from "diff";
 import { useState } from "react";
 
 export function Index() {
-  const [differences, setDifferences] = useState<Change[]>([]);
+  const [terminalErrors, setTerminalErrors] = useState<TerminalError[]>([]);
 
   trpc.fileWatcher.watchFile.useSubscription(undefined, {
     onData: (data) => {
-      setDifferences(data.differences);
+      setTerminalErrors((prev) => [...prev, data]);
     },
     onError: (err) => {
       console.error("Subscription error:", err);
     },
   });
 
-  return <div>{differences.at(0)?.value}</div>;
+  return (
+    <div>
+      {terminalErrors.map((error) => (
+        <div key={error.timestamp}>{error.value}</div>
+      ))}
+    </div>
+  );
 }
