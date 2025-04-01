@@ -8,3 +8,10 @@ export const terminalErrors = sqliteTable("terminal_errors", {
     .notNull()
     .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
 });
+
+export const apiKeys = sqliteTable("api_keys", {
+  id: int().primaryKey(),
+  openai: text(),
+  anthropic: text(),
+  google: text(),
+});

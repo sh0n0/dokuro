@@ -1,3 +1,5 @@
+import { trpc, trpcClient } from "@/client/lib/trpc";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
@@ -12,8 +14,14 @@ export default function App() {
 const root = document.getElementById("app");
 if (!root) throw new Error("No root element");
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(root).render(
   <StrictMode>
-    <App />
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </trpc.Provider>
   </StrictMode>,
 );

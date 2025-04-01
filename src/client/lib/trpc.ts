@@ -1,4 +1,4 @@
-import type { TrpcRouter } from "@/server/trpcRouter";
+import type { TrpcRouter } from "@/server/router/trpcRouter";
 import { createTRPCReact } from "@trpc/react-query";
 import { ipcLink } from "electron-trpc/renderer";
 

@@ -1,9 +1,11 @@
 import { join } from "node:path";
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, Menu, app } from "electron";
 import started from "electron-squirrel-startup";
 import { createIPCHandler } from "electron-trpc/main";
 import { runMigrations } from "./db/migrate";
-import { trpcRouter } from "./trpcRouter";
+import { createMenuTemplate } from "./menu";
+import { menuEvents } from "./router/menu";
+import { trpcRouter } from "./router/trpcRouter";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -30,6 +32,12 @@ const createWindow = () => {
   }
 
   mainWindow.webContents.openDevTools();
+
+  const menuTemplate = createMenuTemplate({
+    appName: app.name,
+    onSettingsClick: () => menuEvents.emit("settingsClick"),
+  });
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 };
 
 app.on("ready", () => {

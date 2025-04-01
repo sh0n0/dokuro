@@ -4,9 +4,9 @@ import { join } from "node:path";
 import { observable } from "@trpc/server/observable";
 import chokidar from "chokidar";
 import { diffLines } from "diff";
-import { db } from "./db/connection";
-import { terminalErrors } from "./db/schema";
-import { procedure, router } from "./trpc";
+import { db } from "../db/connection";
+import { terminalErrors } from "../db/schema";
+import { procedure, router } from "../trpc";
 
 const filePath = join(homedir(), ".dokuro", "terminal_errors.log");
 
