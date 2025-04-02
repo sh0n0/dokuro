@@ -1,8 +1,8 @@
 {
   "name": "dokuro",
-  "productName": "dokuro",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "productName": "Dokuro",
+  "version": "0.1.0",
+  "description": "A desktop application that automatically explains the errors in your terminal",
   "main": ".vite/build/main.js",
   "scripts": {
     "prestart": "drizzle-kit generate",
