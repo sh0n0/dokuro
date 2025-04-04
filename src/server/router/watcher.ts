@@ -4,7 +4,9 @@ import { join } from "node:path";
 import { observable } from "@trpc/server/observable";
 import chokidar from "chokidar";
 import { diffLines } from "diff";
+import { generateExplanation } from "../ai";
 import { db } from "../db/connection";
+import { insertExplanation } from "../db/query";
 import { terminalErrors } from "../db/schema";
 import { procedure, router } from "../trpc";
 
@@ -35,6 +37,11 @@ export const fileWatcherRouter = router({
           })
           .returning();
         if (!data) return;
+
+        const { explanation, solution } = await generateExplanation(
+          differences.value,
+        );
+        await insertExplanation(data.id, explanation, solution);
 
         emit.next({
           id: data.id,

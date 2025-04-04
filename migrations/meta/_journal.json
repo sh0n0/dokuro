@@ -15,6 +15,13 @@
       "when": 1743477956969,
       "tag": "0001_create_api_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1743735409740,
+      "tag": "0002_create_error_explanations",
+      "breakpoints": true
     }
   ]
 }

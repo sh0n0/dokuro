@@ -9,6 +9,18 @@ export const terminalErrors = sqliteTable("terminal_errors", {
     .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
 });
 
+export const errorExplanations = sqliteTable("error_explanations", {
+  id: int().primaryKey({ autoIncrement: true }),
+  errorId: int("error_id")
+    .notNull()
+    .references(() => terminalErrors.id),
+  explanation: text("explanation").notNull(),
+  solution: text("solution").notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+});
+
 export const apiKeys = sqliteTable("api_keys", {
   id: int().primaryKey(),
   openai: text(),

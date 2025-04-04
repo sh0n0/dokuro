@@ -1,4 +1,5 @@
 import { trpc } from "@/client/lib/trpc";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 export function Index() {
@@ -16,7 +17,13 @@ export function Index() {
   return (
     <div>
       {terminalErrors.map((error) => (
-        <div key={error.timestamp}>{error.value}</div>
+        <div key={error.timestamp}>
+          {error.value}
+          <br />
+          <Link to={"/errors/$id"} params={{ id: error.id.toString() }}>
+            <span className="hover:underline">details</span>
+          </Link>
+        </div>
       ))}
     </div>
   );
