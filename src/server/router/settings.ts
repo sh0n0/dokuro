@@ -1,7 +1,10 @@
-import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "../db/connection";
-import { apiKeys } from "../db/schema";
+import {
+  getApiKeys,
+  getSettings,
+  upsertApiKeys,
+  upsertSettings,
+} from "../db/query";
 import { procedure, router } from "../trpc";
 
 const settingsSchema = z.object({
@@ -10,37 +13,27 @@ const settingsSchema = z.object({
     anthropic: z.string().nullable(),
     google: z.string().nullable(),
   }),
+  provider: z.enum(["openai", "anthropic", "google"]),
 });
 
 export const settingsRouter = router({
   getSettings: procedure.query(async () => {
-    const settings = await db
-      .select()
-      .from(apiKeys)
-      .where(eq(apiKeys.id, 1))
-      .then((rows) => rows.at(0));
+    const apiKeys = await getApiKeys();
+    const settings = await getSettings();
 
-    return (
-      settings || {
-        openai: null,
-        anthropic: null,
-        google: null,
-      }
-    );
+    return {
+      openai: apiKeys?.openai || null,
+      anthropic: apiKeys?.anthropic || null,
+      google: apiKeys?.google || null,
+      provider: settings?.provider || "openai",
+    };
   }),
 
   upsertSettings: procedure.input(settingsSchema).mutation(async (req) => {
     const { openai, anthropic, google } = req.input.apiKeys;
-    await db
-      .insert(apiKeys)
-      .values({ id: 1, openai, anthropic, google })
-      .onConflictDoUpdate({
-        target: [apiKeys.id],
-        set: {
-          openai,
-          anthropic,
-          google,
-        },
-      });
+    const provider = req.input.provider;
+
+    await upsertApiKeys(openai, anthropic, google);
+    await upsertSettings(provider);
   }),
 });

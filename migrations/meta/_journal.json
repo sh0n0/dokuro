@@ -22,6 +22,13 @@
       "when": 1743735409740,
       "tag": "0002_create_error_explanations",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1743860164214,
+      "tag": "0003_create_settings",
+      "breakpoints": true
     }
   ]
 }

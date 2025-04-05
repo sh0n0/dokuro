@@ -8,6 +8,13 @@ import {
   FormMessage,
 } from "@/client/components/ui/form";
 import { Input } from "@/client/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/client/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
@@ -17,6 +24,7 @@ import * as z from "zod";
 import { trpc } from "../lib/trpc";
 
 const formSchema = z.object({
+  provider: z.enum(["openai", "anthropic", "google"]).default("openai"),
   openaiApiKey: z.string().optional(),
   anthropicApiKey: z.string().optional(),
   googleApiKey: z.string().optional(),
@@ -30,6 +38,7 @@ export function Settings() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      provider: "openai",
       openaiApiKey: undefined,
       anthropicApiKey: undefined,
       googleApiKey: undefined,
@@ -39,6 +48,7 @@ export function Settings() {
   useEffect(() => {
     if (settings) {
       form.reset({
+        provider: "openai",
         openaiApiKey: settings.openai || undefined,
         anthropicApiKey: settings.anthropic || undefined,
         googleApiKey: settings.google || undefined,
@@ -53,7 +63,10 @@ export function Settings() {
         anthropic: values.anthropicApiKey || null,
         google: values.googleApiKey || null,
       };
-      mutation.mutate({ apiKeys });
+      mutation.mutate({
+        apiKeys,
+        provider: values.provider,
+      });
       form.reset(values);
     } catch (error) {
       console.error("Failed to save API keys", error);
@@ -77,57 +90,94 @@ export function Settings() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="openaiApiKey"
+            name="provider"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>OpenAI API Key</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your OpenAI API key"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
+                <FormLabel>API Provider</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an API provider" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="openai">OpenAI (o3-mini)</SelectItem>
+                    <SelectItem value="anthropic">
+                      Anthropic (Claude 3.7 Sonnet)
+                    </SelectItem>
+                    <SelectItem value="google">
+                      Google (Gemini 2.5 Pro)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="anthropicApiKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Anthropic API Key</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your Anthropic API key"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {form.watch("provider") === "openai" && (
+            <FormField
+              control={form.control}
+              name="openaiApiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>OpenAI API Key</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your OpenAI API key"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-          <FormField
-            control={form.control}
-            name="googleApiKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Google API Key</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your Google API key"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {form.watch("provider") === "anthropic" && (
+            <FormField
+              control={form.control}
+              name="anthropicApiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Anthropic API Key</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your Anthropic API key"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {form.watch("provider") === "google" && (
+            <FormField
+              control={form.control}
+              name="googleApiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Google API Key</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your Google API key"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           <div className="flex justify-end">
             <Button type="submit" disabled={!form.formState.isDirty}>
               Save

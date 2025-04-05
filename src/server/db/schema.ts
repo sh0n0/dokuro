@@ -27,3 +27,8 @@ export const apiKeys = sqliteTable("api_keys", {
   anthropic: text(),
   google: text(),
 });
+
+export const settingsTable = sqliteTable("settings", {
+  id: int().primaryKey(),
+  provider: text("provider").notNull(),
+});

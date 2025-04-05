@@ -1,6 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "./connection";
-import { apiKeys, errorExplanations, terminalErrors } from "./schema";
+import {
+  apiKeys,
+  errorExplanations,
+  settingsTable,
+  terminalErrors,
+} from "./schema";
 
 export async function getApiKeys() {
   const keys = await db
@@ -14,6 +19,24 @@ export async function getApiKeys() {
     anthropic: keys?.anthropic || null,
     google: keys?.google || null,
   };
+}
+
+export async function upsertApiKeys(
+  openai: string | null,
+  anthropic: string | null,
+  google: string | null,
+) {
+  await db
+    .insert(apiKeys)
+    .values({ id: 1, openai, anthropic, google })
+    .onConflictDoUpdate({
+      target: [apiKeys.id],
+      set: {
+        openai,
+        anthropic,
+        google,
+      },
+    });
 }
 
 export async function insertExplanation(
@@ -43,4 +66,28 @@ export async function findErrorAndExplanation(id: number) {
     solution: errors.error_explanations.solution,
     timestamp: errors.terminal_errors.createdAt,
   };
+}
+
+export async function getSettings() {
+  const settings = await db
+    .select()
+    .from(settingsTable)
+    .where(eq(settingsTable.id, 1))
+    .then((rows) => rows.at(0));
+
+  return {
+    provider: settings?.provider || "openai",
+  };
+}
+
+export async function upsertSettings(provider: string) {
+  await db
+    .insert(settingsTable)
+    .values({ id: 1, provider })
+    .onConflictDoUpdate({
+      target: [settingsTable.id],
+      set: {
+        provider,
+      },
+    });
 }
