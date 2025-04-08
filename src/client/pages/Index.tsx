@@ -1,23 +1,20 @@
-import { trpc } from "@/client/lib/trpc";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { Loader2Icon } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
+import { useFileWatcher } from "../hooks/useFileWatcher";
 
 export function Index() {
   const navigate = useNavigate();
-  const [terminalErrors, setTerminalErrors] = useState<TerminalError[]>([]);
-
-  trpc.fileWatcher.watchFile.useSubscription(undefined, {
-    onData: (data) => {
-      setTerminalErrors((prev) => [...prev, data]);
-    },
-    onError: (err) => {
-      console.error("Subscription error:", err);
-    },
-  });
+  const { terminalErrors, isLoading } = useFileWatcher();
 
   return (
     <div>
+      {isLoading && (
+        <div className="m-8 flex items-center justify-center">
+          <Loader2Icon className="animate-spin" />
+        </div>
+      )}
+
       {terminalErrors.map((error) => (
         <div key={error.timestamp} className="m-8">
           <Card

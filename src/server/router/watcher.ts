@@ -14,7 +14,7 @@ const filePath = join(homedir(), ".dokuro", "terminal_errors.log");
 
 export const fileWatcherRouter = router({
   watchFile: procedure.subscription(() => {
-    return observable<TerminalError>((emit) => {
+    return observable<TerminalErrorEvent>((emit) => {
       let prevContent = fs.existsSync(filePath)
         ? fs.readFileSync(filePath, "utf-8")
         : "";
@@ -38,12 +38,18 @@ export const fileWatcherRouter = router({
           .returning();
         if (!data) return;
 
+        emit.next({
+          type: "loading",
+          id: data.id,
+        });
+
         const { explanation, solution } = await generateExplanation(
           differences.value,
         );
         await insertExplanation(data.id, explanation, solution);
 
         emit.next({
+          type: "terminal_error",
           id: data.id,
           value: data.value,
           timestamp: data.createdAt,
