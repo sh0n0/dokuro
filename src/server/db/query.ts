@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "./connection";
 import {
   apiKeys,
@@ -37,6 +37,15 @@ export async function upsertApiKeys(
         google,
       },
     });
+}
+
+export async function getErrorList() {
+  const errors = await db
+    .select()
+    .from(terminalErrors)
+    .orderBy(desc(terminalErrors.id));
+
+  return errors;
 }
 
 export async function insertExplanation(
