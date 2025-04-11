@@ -14,7 +14,7 @@ export async function generateExplanation(terminalError: string) {
       explanation: z.string(),
       solution: z.string(),
     }),
-    prompt: `Explain the following terminal error and provide a solution:\n\n${terminalError}`,
+    prompt: `Explain the following terminal error and provide a solution in Markdown format:\n\n${terminalError}`,
   });
 
   return res.object;

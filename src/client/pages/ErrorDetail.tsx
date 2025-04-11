@@ -1,3 +1,5 @@
+import Markdown from "react-markdown";
+import { Separator } from "../components/ui/separator";
 import { trpc } from "../lib/trpc";
 
 type ErrorDetailProps = {
@@ -15,9 +17,20 @@ export function ErrorDetail({ id }: ErrorDetailProps) {
 
   return (
     <div>
-      <p>{terminalError.value}</p>
-      <p>{terminalError.explanation}</p>
-      <p>{terminalError.solution}</p>
+      <div className="p-4 font-bold text-xl">Error</div>
+      <div className="p-8">
+        <Markdown>{terminalError.value}</Markdown>
+      </div>
+      <Separator className="my-4" />
+      <div className="p-4 font-bold text-xl">Explanation</div>
+      <div className="p-8">
+        <Markdown>{terminalError.explanation}</Markdown>
+      </div>
+      <Separator className="my-4" />
+      <div className="p-4 font-bold text-xl">Solution</div>
+      <div className="p-8">
+        <Markdown>{terminalError.solution}</Markdown>
+      </div>
     </div>
   );
 }
