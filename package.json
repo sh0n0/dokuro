@@ -63,7 +63,7 @@
     "@trpc/client": "^10.45.2",
     "@trpc/react-query": "^10.45.2",
     "@trpc/server": "^10.45.2",
-    "ai": "^4.2.10",
+    "ai": "^4.3.5",
     "better-sqlite3": "^11.9.1",
     "chokidar": "^4.0.3",
     "class-variance-authority": "^0.7.1",
