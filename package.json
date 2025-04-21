@@ -69,7 +69,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "diff": "^7.0.0",
-    "drizzle-orm": "^0.40.1",
+    "drizzle-orm": "^0.42.0",
     "electron-squirrel-startup": "^1.0.1",
     "electron-trpc": "^0.7.1",
     "lucide-react": "^0.486.0",
